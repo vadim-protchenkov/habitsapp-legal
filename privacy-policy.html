@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HabitsApp — Политика конфиденциальности / Privacy Policy</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+    line-height: 1.55;
+    color: #1a1a1a;
+    background: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e8e8e8; background: #121212; }
+    a { color: #7fb0ff; }
+    hr { border-color: #333; }
+  }
+  h1 { font-size: 1.5rem; margin-top: 2.5rem; }
+  h2 { font-size: 1.15rem; margin-top: 2rem; }
+  p, li { font-size: 0.98rem; }
+  .lang-switch { font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .lang-switch a { margin-right: 12px; }
+  hr { margin: 3rem 0; border: none; border-top: 1px solid #ddd; }
+</style>
+</head>
+<body>
+
+<div class="lang-switch"><a href="#ru">Русский</a><a href="#en">English</a></div>
+
+<h1 id="ru">Политика конфиденциальности HabitsApp</h1>
+<p>Дата вступления в силу: 16 августа 2026 г.</p>
+
+<h2>Кратко</h2>
+<p>HabitsApp можно полностью использовать без аккаунта: тогда все данные остаются только на устройстве и никуда не передаются. Аккаунт нужен, только если вы хотите синхронизировать привычки между устройствами. Мы не показываем рекламу, не используем аналитику и трекинг, не продаём и не передаём данные третьим лицам для маркетинга.</p>
+
+<h2>Какие данные собираются</h2>
+<p><strong>Без аккаунта:</strong> ничего не покидает устройство. Привычки, отметки о выполнении, серии и настройки хранятся локально (SharedPreferences / UserDefaults).</p>
+<p><strong>При входе через Google (по желанию):</strong></p>
+<ul>
+  <li>Email и идентификатор аккаунта Google. Нужны для входа и привязки данных к аккаунту. Обрабатывается через Supabase Auth, HabitsApp не хранит и не видит ваш пароль Google.</li>
+  <li>Данные приложения: названия и настройки привычек, отметки о выполнении, цели, серия/статус, достижения. Нужны, чтобы синхронизировать их между устройствами.</li>
+</ul>
+<p>Мы не собираем геолокацию, контакты, фото, историю браузера и не используем сторонние SDK для аналитики или рекламы.</p>
+
+<h2>Как используются данные</h2>
+<p>Исключительно для работы самого приложения: синхронизация привычек между вашими устройствами и восстановление данных после переустановки. Данные не используются для рекламы и не передаются рекламным сетям.</p>
+
+<h2>Кому передаются данные</h2>
+<ul>
+  <li><strong>Google</strong>, как провайдер входа (OAuth). См. <a href="https://policies.google.com/privacy">политику конфиденциальности Google</a>.</li>
+  <li><strong>Supabase</strong>, как поставщик инфраструктуры (база данных и аутентификация), обрабатывающий данные от нашего имени. См. <a href="https://supabase.com/privacy">политику конфиденциальности Supabase</a>.</li>
+</ul>
+<p>Больше данные никому не передаются.</p>
+
+<h2>Уведомления</h2>
+<p>Напоминания локальные, планируются на самом устройстве. Мы не используем push-уведомления и не отправляем на сервер данные, связанные с уведомлениями.</p>
+
+<h2>Хранение и удаление данных</h2>
+<p>Данные аккаунта хранятся, пока аккаунт существует. Вы можете:</p>
+<ul>
+  <li><strong>Выйти.</strong> Локальная копия на устройстве очищается, данные в облаке сохраняются для следующего входа.</li>
+  <li><strong>Удалить аккаунт</strong> (Настройки → Аккаунт → Удалить аккаунт). Все привычки, отметки, цели и сам аккаунт удаляются безвозвратно. Действие необратимо.</li>
+</ul>
+
+<h2>Дети</h2>
+<p>Приложение не адресовано детям младше 13 лет и не собирает данные от них осознанно.</p>
+
+<h2>Изменения политики</h2>
+<p>При существенных изменениях дата вверху документа будет обновлена. Продолжение использования приложения означает согласие с актуальной версией.</p>
+
+<h2>Контакты</h2>
+<p>По вопросам, связанным с данными и приватностью: <a href="mailto:vadim.protchenkov@gmail.com">vadim.protchenkov@gmail.com</a></p>
+
+<hr>
+
+<h1 id="en">HabitsApp Privacy Policy</h1>
+<p>Effective date: August 16, 2026</p>
+
+<h2>Summary</h2>
+<p>HabitsApp works fully without an account. In that case nothing leaves your device. An account (optional) is only needed to sync habits across devices. We show no ads, use no analytics or tracking SDKs, and do not sell or share your data for marketing.</p>
+
+<h2>What we collect</h2>
+<p><strong>Without an account:</strong> nothing leaves the device. Habits, completions, streaks and settings are stored locally only.</p>
+<p><strong>When signing in with Google (optional):</strong></p>
+<ul>
+  <li>Email and Google account id. Used to sign you in and link your data to your account, via Supabase Auth. HabitsApp never sees or stores your Google password.</li>
+  <li>App data: habit names and settings, completions, goals, streak/rank, achievements. Used to sync across your devices.</li>
+</ul>
+<p>We do not collect location, contacts, photos, or browsing history, and use no third-party analytics or advertising SDKs.</p>
+
+<h2>How data is used</h2>
+<p>Solely to run the app: syncing your habits across devices and restoring your data after a reinstall. Never used for advertising or shared with ad networks.</p>
+
+<h2>Who we share data with</h2>
+<ul>
+  <li><strong>Google</strong>, as the sign-in provider (OAuth). See <a href="https://policies.google.com/privacy">Google's Privacy Policy</a>.</li>
+  <li><strong>Supabase</strong>, as our infrastructure provider (database and authentication), processing data on our behalf. See <a href="https://supabase.com/privacy">Supabase's Privacy Policy</a>.</li>
+</ul>
+<p>No one else.</p>
+
+<h2>Notifications</h2>
+<p>Reminders are local, scheduled on-device. We don't use push notifications or send notification-related data to a server.</p>
+
+<h2>Retention and deletion</h2>
+<ul>
+  <li><strong>Sign out.</strong> Clears the local copy on this device; cloud data stays for your next sign-in.</li>
+  <li><strong>Delete account</strong> (Settings → Account → Delete account). Permanently deletes all habits, completions, goals, and the account itself. This cannot be undone.</li>
+</ul>
+
+<h2>Children</h2>
+<p>The app is not directed at children under 13 and does not knowingly collect data from them.</p>
+
+<h2>Changes</h2>
+<p>Material changes will update the date at the top of this document. Continued use means you accept the current version.</p>
+
+<h2>Contact</h2>
+<p>For privacy questions: <a href="mailto:vadim.protchenkov@gmail.com">vadim.protchenkov@gmail.com</a></p>
+
+</body>
+</html>

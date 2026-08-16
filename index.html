@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HabitsApp: постройте систему, а не список дел</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BF08D422K4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BF08D422K4');
+</script>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=111424254', 'ym');
+
+    ym(111424254, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/111424254" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<style>
+  :root{
+    --bg:#FAFAFA; --card:#FFFFFF; --ink:#0B0B0F; --muted:#8A8A8E; --faint:#B9B9BE;
+    --hair:#ECECEE; --track:#E9E9EC;
+    --accent:#2E6BFF; --accent2:#16A06A; --accent3:#F0792B;
+    --accent-ink:#FFFFFF;
+    --shadow: 0 1px 3px rgba(11,11,15,.04), 0 8px 28px rgba(11,11,15,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0E0E12; --card:#17171C; --ink:#F3F3F6; --muted:#9A9AA2; --faint:#5E5E68;
+      --hair:#26262C; --track:#2C2C33; --shadow: 0 1px 3px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E0E12; --card:#17171C; --ink:#F3F3F6; --muted:#9A9AA2; --faint:#5E5E68;
+    --hair:#26262C; --track:#2C2C33; --shadow: 0 1px 3px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"]{
+    --bg:#FAFAFA; --card:#FFFFFF; --ink:#0B0B0F; --muted:#8A8A8E; --faint:#B9B9BE;
+    --hair:#ECECEE; --track:#E9E9EC; --shadow: 0 1px 3px rgba(11,11,15,.04), 0 8px 28px rgba(11,11,15,.05);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+    line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+  section{padding:96px 0}
+  h1,h2,h3{letter-spacing:-.02em;line-height:1.14}
+  .mut{color:var(--muted)}
+  .eyebrow{color:var(--faint);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.13em;margin-bottom:10px}
+  .center{text-align:center}
+
+  /* reveal-on-scroll */
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+  .rv.in{opacity:1;transform:translateY(0)}
+  .rv2{transition-delay:.08s} .rv3{transition-delay:.16s} .rv4{transition-delay:.24s}
+  @media (prefers-reduced-motion: reduce){
+    .rv{opacity:1!important;transform:none!important;transition:none!important}
+    *{animation:none!important}
+  }
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);
+    background:color-mix(in srgb, var(--bg) 82%, transparent);border-bottom:1px solid var(--hair)}
+  nav .row{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:-.02em}
+  .mark{width:28px;height:28px;border-radius:8px;flex:none;display:block}
+  .navcta{font-weight:700;font-size:13.5px;color:var(--accent-ink);background:var(--accent);
+    padding:9px 16px;border-radius:99px;text-decoration:none;white-space:nowrap}
+
+  /* HERO */
+  .hero{padding:88px 0 40px}
+  .herogrid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  @media(max-width:860px){.herogrid{grid-template-columns:1fr}.phone{margin:0 auto}}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--hair);
+    padding:7px 14px 7px 10px;border-radius:99px;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:22px}
+  .pill b{color:var(--ink)}
+  .dot{width:6px;height:6px;border-radius:99px;background:var(--accent2)}
+  .hero h1{font-size:clamp(36px,4.6vw,54px);font-weight:800;max-width:12ch;margin-bottom:20px}
+  .hero .lead{font-size:17.5px;color:var(--muted);max-width:46ch;margin-bottom:32px}
+  .ctarow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);
+    font-weight:700;font-size:15.5px;padding:14px 24px;border-radius:14px;text-decoration:none;
+    transition:transform .18s cubic-bezier(.16,1,.3,1),box-shadow .18s ease}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(11,11,15,.18)}
+  .btn svg{width:18px;height:18px}
+  .fineprint{font-size:12.5px;color:var(--faint)}
+
+  /* phone mock */
+  .phone{width:290px;border-radius:40px;background:var(--card);border:1px solid var(--hair);
+    box-shadow:var(--shadow);padding:14px;position:relative}
+  .phone .notch{width:90px;height:22px;background:var(--bg);border-radius:0 0 16px 16px;margin:0 auto 6px}
+  .screen{background:var(--bg);border-radius:26px;padding:22px 18px 20px;min-height:430px}
+  .screen .day{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  .ringwrap{display:flex;justify-content:center;margin-bottom:22px}
+  .ringnum{font-size:30px;font-weight:800;letter-spacing:-.03em}
+  .ringnum span{color:var(--accent)}
+  .ringcap{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:1px}
+  .rows{background:var(--card);border-radius:18px;border:1px solid var(--hair);overflow:hidden}
+  .hrow{display:flex;align-items:center;gap:11px;padding:12px 14px}
+  .hrow+.hrow{border-top:1px solid var(--hair)}
+  .hrow .cdot{width:8px;height:8px;border-radius:99px;flex:none}
+  .hrow .t{flex:1;font-size:13.5px;font-weight:600}
+  .hrow .t.done{color:var(--faint);text-decoration:line-through}
+  .hrow .cap{font-size:10px;color:var(--muted);font-weight:500}
+  .check{width:20px;height:20px;border-radius:99px;flex:none;display:flex;align-items:center;justify-content:center}
+  .check.on{background:var(--ink)}
+  .check.off{border:1.5px solid var(--hair)}
+  .check svg{width:11px;height:11px}
+
+  /* generic section layout */
+  .feat{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .feat.rev{grid-template-columns:1fr 1fr}
+  .feat.rev .art{order:2}
+  @media(max-width:820px){.feat,.feat.rev{grid-template-columns:1fr}.feat.rev .art{order:0}}
+  .feat h2{font-size:clamp(24px,3vw,32px);font-weight:800;margin-bottom:12px}
+  .feat p{color:var(--muted);font-size:15.5px;max-width:42ch}
+  .art{display:flex;justify-content:center}
+  .card{background:var(--card);border:1px solid var(--hair);border-radius:22px;box-shadow:var(--shadow);
+    padding:20px;width:100%;max-width:340px;transition:transform .25s cubic-bezier(.16,1,.3,1)}
+  .card:hover{transform:translateY(-3px)}
+
+  /* type toggle recreation */
+  .seg{display:flex;background:var(--track);border-radius:13px;padding:4px;margin:14px 0}
+  .seg div{flex:1;text-align:center;padding:9px 0;border-radius:10px;font-size:12.5px;font-weight:600;color:var(--muted)}
+  .seg div.on{background:var(--accent);color:#fff}
+  .days{display:flex;gap:5px;margin-top:14px}
+  .days div{flex:1;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    font-size:10.5px;font-weight:700;border:1px solid var(--hair);color:var(--muted)}
+  .days div.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .namerow{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px}
+  .namerow .cdot{width:9px;height:9px;border-radius:99px}
+
+  /* rank ladder */
+  .ladder{display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid var(--hair);
+    border-radius:22px;box-shadow:var(--shadow);padding:22px;max-width:360px;width:100%}
+  .rung{display:flex;align-items:center;gap:12px;padding:10px 0}
+  .rung .n{width:26px;height:26px;border-radius:99px;flex:none;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;border:2px solid var(--hair);color:var(--faint)}
+  .rung.cur .n{background:var(--accent);border-color:var(--accent);color:#fff}
+  .rung .label{font-size:13.5px;font-weight:700}
+  .rung.cur .label{color:var(--accent)}
+  .rung .thr{margin-left:auto;font-size:11px;color:var(--faint);font-weight:600}
+  .trackbar{height:6px;background:var(--track);border-radius:99px;margin:14px 0 4px;overflow:hidden}
+  .trackbar i{display:block;height:100%;background:var(--accent);border-radius:99px;width:0;transition:width 1.1s cubic-bezier(.16,1,.3,1)}
+  .rv.in .trackbar i{width:46%}
+
+  .rules{display:grid;gap:12px;max-width:400px}
+  .rule{display:flex;gap:14px;background:var(--card);border:1px solid var(--hair);border-radius:18px;padding:16px;
+    box-shadow:var(--shadow);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+  .rule:hover{transform:translateY(-2px)}
+  .rule .ic{width:36px;height:36px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;
+    background:color-mix(in srgb, var(--accent) 12%, transparent)}
+  .rule .ic svg{width:18px;height:18px;stroke:var(--accent)}
+  .rule b{display:block;font-size:14px;font-weight:700;margin-bottom:2px}
+  .rule span{font-size:12.5px;color:var(--muted);line-height:1.4}
+
+  /* goal card */
+  .goalcard{background:var(--card);border:1px solid var(--hair);border-radius:22px;box-shadow:var(--shadow);
+    padding:20px;max-width:340px;width:100%}
+  .goalhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  .goalhead b{font-size:16.5px;font-weight:700}
+  .goalhead .pct{font-size:17px;font-weight:800;color:var(--accent)}
+  .goalsub{font-size:12px;color:var(--muted);margin-bottom:13px}
+  .bar{height:7px;background:var(--track);border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--accent);border-radius:99px;width:0;transition:width 1.1s cubic-bezier(.16,1,.3,1) .1s}
+  .rv.in .bar i{width:62%}
+  .dots{display:flex;gap:6px;margin-top:12px}
+  .dots i{width:8px;height:8px;border-radius:99px}
+
+  /* achievements grid */
+  .badges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:340px;width:100%}
+  .badge{background:var(--card);border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow);
+    padding:16px 8px;text-align:center;transition:transform .25s cubic-bezier(.16,1,.3,1)}
+  .badge:hover{transform:translateY(-2px)}
+  .badge .ic{width:40px;height:40px;border-radius:99px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center}
+  .badge.on .ic{background:color-mix(in srgb, var(--accent) 14%, transparent)}
+  .badge.off .ic{background:var(--track)}
+  .badge svg{width:17px;height:17px}
+  .badge span{font-size:10.5px;font-weight:700}
+  .badge.off span{color:var(--muted)}
+
+  /* trust list */
+  .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+  .trust.cols2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:760px){.trust,.trust.cols2{grid-template-columns:1fr}}
+  .trustcard{background:var(--card);border:1px solid var(--hair);border-radius:18px;padding:22px}
+  .trustcard b{display:block;font-size:15px;font-weight:700;margin-bottom:6px}
+  .trustcard span{font-size:13px;color:var(--muted);line-height:1.5}
+
+  /* borderless value list: icon chip + text, no empty-looking boxes */
+  .values{display:grid;grid-template-columns:repeat(2,1fr);gap:28px 36px;margin-top:30px}
+  @media(max-width:760px){.values{grid-template-columns:1fr}}
+  .value{display:flex;gap:14px;align-items:flex-start}
+  .value .ic{width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;
+    background:color-mix(in srgb, var(--accent) 12%, transparent)}
+  .value .ic svg{width:19px;height:19px;stroke:var(--accent)}
+  .value b{display:block;font-size:15px;font-weight:700;margin-bottom:3px}
+  .value span{font-size:13px;color:var(--muted);line-height:1.5}
+
+  .final{text-align:center;padding:110px 0 90px}
+  .final h2{font-size:clamp(28px,3.6vw,40px);font-weight:800;margin-bottom:16px}
+  .final p{color:var(--muted);font-size:15.5px;margin-bottom:32px}
+
+  footer{padding:36px 0;border-top:1px solid var(--hair);text-align:center;color:var(--faint);font-size:12.5px}
+
+  /* JTBD copy blocks */
+  .lead2{font-size:15.5px;color:var(--muted);max-width:56ch;margin-bottom:22px}
+  .checks{list-style:none;display:grid;gap:12px;max-width:520px}
+  .checks.wide{max-width:none;grid-template-columns:repeat(3,1fr);gap:28px}
+  @media(max-width:760px){.checks.wide{grid-template-columns:1fr}}
+  .checks li{display:flex;gap:12px;align-items:flex-start;font-size:15px}
+  .checks li::before{content:"";flex:none;width:22px;height:22px;margin-top:1px;border-radius:7px;
+    background:color-mix(in srgb, var(--accent2) 16%, transparent);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316A06A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:center;background-size:13px}
+  .note{margin-top:18px;color:var(--faint);font-style:italic;font-size:13.5px}
+
+  .qlist{list-style:none;display:grid;gap:11px;max-width:640px;margin:22px auto 0}
+  .qlist li{background:var(--card);border:1px solid var(--hair);border-left:3px solid var(--accent);
+    padding:15px 18px;border-radius:12px;font-size:15px;text-align:left}
+
+  .flow{display:grid;gap:12px;max-width:720px;margin:0 auto}
+  .flow .row{display:flex;gap:16px;align-items:flex-start;background:var(--card);
+    border:1px solid var(--hair);border-radius:14px;padding:18px 20px;text-align:left}
+  .flow .row .n{flex:none;width:30px;height:30px;border-radius:9px;
+    background:color-mix(in srgb, var(--accent) 14%, transparent);
+    color:var(--accent);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .flow .row b{display:block;margin-bottom:2px;font-size:14.5px}
+  .flow .row span{color:var(--muted);font-size:13.5px}
+
+  .barlist{display:grid;gap:12px;max-width:680px;margin:0 auto}
+  .barlist .item{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:16px 20px;text-align:left}
+  .barlist .item .q{color:var(--faint);font-style:italic;font-size:13.5px;margin-bottom:5px}
+  .barlist .item .a{font-weight:600;font-size:14.5px}
+
+  .vslist{display:grid;gap:12px;max-width:680px;margin:0 auto}
+  .vslist .item{display:flex;gap:16px;background:var(--card);border:1px solid var(--hair);border-radius:14px;
+    padding:15px 20px;text-align:left;align-items:baseline}
+  .vslist .item b{flex:none;min-width:150px;font-size:14px}
+  .vslist .item span{color:var(--muted);font-size:13.5px}
+
+  .fitrow{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:26px}
+  .fitrow .fdot{width:7px;height:7px;border-radius:99px;background:var(--faint)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap row">
+    <div class="brand"><img class="mark" alt="" src="data:image/png;base64,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">HabitsApp</div>
+    <a class="navcta" href="#final">Скоро в App Store</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap herogrid">
+    <div class="rv in">
+      <div class="pill"><span class="dot"></span>Работает без аккаунта</div>
+      <h1>Система привычек для тех,<br>кто живёт по-крупному</h1>
+      <p class="lead">Превратите большие цели в ежедневные ритуалы. Держите дисциплину во всех сферах жизни без хаоса в десяти приложениях.</p>
+      <div class="ctarow">
+        <a class="btn" href="#final">
+          <svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+          Скоро в App Store
+        </a>
+        <span class="fineprint">Бесплатно · без рекламы</span>
+      </div>
+    </div>
+
+    <div class="phone rv rv2">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="day">Сегодня</div>
+        <div class="ringwrap">
+          <svg id="heroRing" width="152" height="152" viewBox="0 0 152 152">
+            <circle cx="76" cy="76" r="66" fill="none" stroke="var(--track)" stroke-width="13"/>
+            <circle id="heroRingFg" cx="76" cy="76" r="66" fill="none" stroke="var(--accent)" stroke-width="13"
+              stroke-linecap="round" stroke-dasharray="414.7" stroke-dashoffset="414.7"
+              transform="rotate(-90 76 76)"/>
+            <text x="76" y="72" text-anchor="middle" font-size="26" font-weight="800" fill="var(--ink)" letter-spacing="-1">
+              <tspan fill="var(--accent)">3</tspan>/4</text>
+            <text x="76" y="92" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">закрыто</text>
+          </svg>
+        </div>
+        <div class="rows">
+          <div class="hrow"><span class="cdot" style="background:#2E6BFF"></span><span class="t done">Чтение</span><span class="check on"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+          <div class="hrow"><span class="cdot" style="background:#16A06A"></span><span class="t done">Вода</span><span class="check on"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+          <div class="hrow"><span class="cdot" style="background:#F0792B"></span><span class="t done">Отжимания</span><span class="check on"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+          <div class="hrow"><span class="cdot" style="background:#9B59F6"></span><span class="t">Медитация</span><span class="check off"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap rv">
+    <div class="eyebrow">Одно приложение вместо системы из костылей</div>
+    <h2 style="font-size:clamp(24px,3vw,32px);font-weight:800;margin-bottom:14px">Вся дисциплина в одном месте</h2>
+    <p class="lead2" style="max-width:none">Вы ведёте цели в Notion, таски в Todoist, а привычки никак. HabitsApp собирает всё это в единую систему.</p>
+    <ul class="checks wide">
+      <li>Привычки любого типа: простая отметка «сделал» или счётчик с целью на день</li>
+      <li>Расписание под себя: выберите нужные дни недели, а не только «каждый день»</li>
+      <li>Привязка ежедневных действий к большим целям с дедлайном</li>
+    </ul>
+    <p class="note">Первая привычка занимает 15 секунд. Без онбординга на 20 экранов.</p>
+  </div>
+</section>
+
+<section style="background:var(--card);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
+  <div class="wrap">
+    <div class="rv" style="margin-bottom:8px">
+      <div class="eyebrow">Почему именно HabitsApp</div>
+      <h2 style="font-size:clamp(24px,3vw,32px);font-weight:800">Сделано для требовательных</h2>
+    </div>
+    <div class="values">
+      <div class="value rv">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M8 15l2 2 4-4"/></svg></span>
+        <div><b>Гибкость без компромиссов</b><span>Любая частота из дней недели и паузы на отпуск без обнуления серии, а не только «каждый день».</span></div>
+      </div>
+      <div class="value rv rv2">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V10M12 19V5M20 19v-7"/></svg></span>
+        <div><b>Статусы вместо галочек</b><span>Видно, растёте вы или буксуете, с одного взгляда, без сложных графиков и настроек.</span></div>
+      </div>
+      <div class="value rv rv3">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+        <div><b>Серьёзный дизайн</b><span>Мотивация через ощущение мастерства, а не падающие монетки и мультяшки.</span></div>
+      </div>
+      <div class="value rv rv4">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5a15 15 0 0 1 18 0M6.2 12a10 10 0 0 1 11.6 0M9.5 15.5a5 5 0 0 1 5 0"/><circle cx="12" cy="19" r="1"/><path d="M4 4l16 16" stroke-width="2"/></svg></span>
+        <div><b>Работает без сети</b><span>Все данные можно вести полностью локально, без аккаунта и без интернета.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap feat">
+    <div class="art rv">
+      <div class="card">
+        <div class="namerow"><span class="cdot" style="background:var(--accent)"></span>Отжимания</div>
+        <div class="seg"><div>Да / нет</div><div class="on">Количество · 30</div></div>
+        <div class="days">
+          <div class="on">Пн</div><div class="on">Вт</div><div class="on">Ср</div><div class="on">Чт</div><div class="on">Пт</div><div>Сб</div><div>Вс</div>
+        </div>
+      </div>
+    </div>
+    <div class="rv rv2">
+      <div class="eyebrow">Своя система</div>
+      <h2>Настройте привычку под себя</h2>
+      <p>Название, цвет и дни недели можно настроить как угодно. Тип определяет, как отмечать прогресс: простая отметка «сделал» или счётчик с целью на день.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--card);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
+  <div class="wrap feat rev">
+    <div class="rv">
+      <div class="eyebrow">Мотивация</div>
+      <h2>Растите статус вместо списка галочек</h2>
+      <p>Пять статусов от Новичка до Мастера. Закрывайте ≥60% привычек в день, и серия таких дней растёт: 5 → 15 → 30 → 50.</p>
+    </div>
+    <div class="art rv rv2">
+      <div class="ladder">
+        <div class="rung"><span class="n">5</span><span class="label mut">Мастер</span><span class="thr">50</span></div>
+        <div class="rung"><span class="n">4</span><span class="label mut">Архитектор</span><span class="thr">30</span></div>
+        <div class="rung"><span class="n">3</span><span class="label mut">Систематик</span><span class="thr">15</span></div>
+        <div class="rung cur"><span class="n">2</span><span class="label">Практик</span><span class="thr">5</span></div>
+        <div class="rung"><span class="n">1</span><span class="label mut">Новичок</span><span class="thr">0</span></div>
+        <div class="trackbar"><i></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center rv" style="max-width:480px;margin:0 auto 44px">
+      <div class="eyebrow center">Без чувства вины</div>
+      <h2>Гибкость, а не идеальность</h2>
+    </div>
+    <div class="rules" style="margin:0 auto">
+      <div class="rule rv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg></span><div><b>Пауза</b><span>Поставьте привычку на паузу: она не в счёте, серия не прерывается.</span></div></div>
+      <div class="rule rv rv2"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg></span><div><b>Правки задним числом</b><span>Забыли отметить вчера? Можно закрыть день позже, до полуночи следующего.</span></div></div>
+      <div class="rule rv rv3"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 4 6 7 6 11a6 6 0 1 1-12 0c0-4 3-7 6-11z"/></svg></span><div><b>Заморозки серии</b><span>За каждые 7 качественных дней начисляется токен, который сам спасает случайный пропуск.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--card);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
+  <div class="wrap feat">
+    <div class="art rv">
+      <div class="goalcard">
+        <div class="goalhead"><b>Пробежать 10 км</b><span class="pct">62%</span></div>
+        <div class="goalsub">3 привычки · осталось 24 дня</div>
+        <div class="bar"><i></i></div>
+        <div class="dots"><i style="background:#2E6BFF"></i><i style="background:#16A06A"></i><i style="background:#F0792B"></i></div>
+      </div>
+    </div>
+    <div class="rv rv2">
+      <div class="eyebrow">Общая картина</div>
+      <h2>Свяжите привычки с целью</h2>
+      <p>Задайте дедлайн и привяжите несколько привычек. Прогресс к цели считается сам, по мере того как закрываются привычки.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap feat rev">
+    <div class="rv">
+      <div class="eyebrow">Признание прогресса</div>
+      <h2>Достижения открываются сами</h2>
+      <p>Бейджи за серии, отметки и закрытые цели появляются сами, ничего включать не нужно.</p>
+    </div>
+    <div class="art rv rv2">
+      <div class="badges">
+        <div class="badge on"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>Старт</span></div>
+        <div class="badge on"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.4-1.1z"/></svg></span><span>7 дней</span></div>
+        <div class="badge off"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg></span><span>30 дней</span></div>
+        <div class="badge off"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg></span><span>Цель</span></div>
+        <div class="badge off"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg></span><span>Мастер</span></div>
+        <div class="badge off"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg></span><span>100%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--card);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
+  <div class="wrap center">
+    <div class="rv" style="max-width:560px;margin:0 auto">
+      <div class="eyebrow center">Узнаёте себя?</div>
+      <h2 style="font-size:clamp(24px,3vw,32px);font-weight:800">Вы хотите жить системно и выжать максимум</h2>
+    </div>
+    <ul class="qlist rv rv2">
+      <li>Начался новый квартал, и вы снова составляете список целей?</li>
+      <li>Прочитали «Atomic Habits», вдохновились, а через две недели всё рассыпалось?</li>
+      <li>Бесит, когда трекер требует «каждый день», хотя ваш ритм другой?</li>
+      <li>Ведёте десять сфер жизни, но ни одну системно?</li>
+    </ul>
+    <p class="note rv rv3">Слабая воля тут ни при чём. Ритм держит система, а не разовый порыв мотивации.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap center">
+    <div class="rv" style="max-width:560px;margin:0 auto 30px">
+      <div class="eyebrow center">Как это работает</div>
+      <h2 style="font-size:clamp(24px,3vw,32px);font-weight:800">HabitsApp держит вашу дисциплину</h2>
+    </div>
+    <div class="flow rv rv2">
+      <div class="row"><div class="n">1</div><div><b>Проектируете систему под цели</b><span>Большие амбиции превращаются в выполнимые ежедневные шаги.</span></div></div>
+      <div class="row"><div class="n">2</div><div><b>Фиксируете без трения</b><span>Отметка занимает секунду, данные остаются полными.</span></div></div>
+      <div class="row"><div class="n">3</div><div><b>Держите мотивацию</b><span>Осмысленные серии и статусы вместо детских наград.</span></div></div>
+      <div class="row"><div class="n">4</div><div><b>Корректируете на лету</b><span>Видите, что проседает, и перестраиваете расписание.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--card);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
+  <div class="wrap center">
+    <div class="rv" style="max-width:520px;margin:0 auto">
+      <div class="eyebrow center">Где вы окажетесь через 3 месяца</div>
+      <h2 style="font-size:clamp(24px,3vw,32px);font-weight:800">Точка Б</h2>
+    </div>
+    <ul class="checks rv rv2" style="margin:26px auto 0;text-align:left">
+      <li>Спокойная уверенность: ключевые ритуалы работают на автопилоте</li>
+      <li>Гордость за устойчивость: впервые цели не рассыпались через две недели</li>
+      <li>Ясная картина: ваша жизнь стала управляемой системой, а не хаосом</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap center">
+    <div class="rv" style="max-width:520px;margin:0 auto 28px">
+      <div class="eyebrow center">Ничего не мешает начать</div>
+      <h2 style="font-size:clamp(24px,3vw,32px);font-weight:800">Снимаем барьеры</h2>
+    </div>
+    <div class="barlist rv rv2">
+      <div class="item"><div class="q">«Опять разбираться в сложном приложении»</div><div class="a">Первая привычка за 15 секунд, продвинутое открывается по мере надобности.</div></div>
+      <div class="item"><div class="q">«Очередная подписка»</div><div class="a">Полноценный бесплатный режим. Платный уровень появится, только когда почувствуете ценность.</div></div>
+      <div class="item"><div class="q">«Заброшу, как все трекеры»</div><div class="a">Гибкие паузы и заморозки серии без обнуления прогресса не дают сорваться окончательно.</div></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--card);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
+  <div class="wrap center">
+    <div class="rv" style="max-width:520px;margin:0 auto 28px">
+      <div class="eyebrow center">Почему не они</div>
+      <h2 style="font-size:clamp(24px,3vw,32px);font-weight:800">Увольняем конкурентов</h2>
+    </div>
+    <div class="vslist rv rv2">
+      <div class="item"><b>Apple Напоминания</b><span>Не для системы привычек: нет серий, статусов, мотивации.</span></div>
+      <div class="item"><b>Habitica</b><span>Мощная геймификация, но «детский» вид отпугивает требовательных.</span></div>
+      <div class="item"><b>Streaks</b><span>Красиво, но жёсткий лимит привычек и слабая гибкость под сложный ритм.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center rv" style="max-width:560px;margin:0 auto">
+      <div class="eyebrow center">Приватность по умолчанию</div>
+      <h2 style="font-size:clamp(24px,3vw,32px);font-weight:800;margin-bottom:8px">Ваши данные принадлежат только вам</h2>
+      <p class="mut" style="font-size:15px">Без рекламы. Без сторонней аналитики и трекинга.</p>
+    </div>
+    <div class="trust">
+      <div class="trustcard rv"><b>Работает офлайн</b><span>Все данные можно вести полностью локально, без регистрации. Ничего не покидает устройство.</span></div>
+      <div class="trustcard rv rv2"><b>Google по желанию</b><span>Войдите, если хотите синхронизировать привычки между устройствами. Не обязательно.</span></div>
+      <div class="trustcard rv rv3"><b>Удаление в один тап</b><span>Передумали? Аккаунт и все данные удаляются прямо в приложении, без переписки с поддержкой.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="final">
+  <div class="wrap">
+    <div class="rv">
+      <h2>Начните строить систему сегодня</h2>
+      <p>HabitsApp сейчас готовится к публикации в App Store.</p>
+      <a class="btn" href="#">
+        <svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+        Скоро в App Store
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">HabitsApp: трекер привычек для iPhone</div>
+</footer>
+
+<script>
+  // Scroll-reveal
+  var els = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.2 });
+    els.forEach(function(el){ io.observe(el); });
+  } else {
+    els.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // Hero ring fill-in
+  var ring = document.getElementById('heroRingFg');
+  if (ring) {
+    requestAnimationFrame(function(){
+      setTimeout(function(){
+        ring.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.16,1,.3,1)';
+        ring.setAttribute('stroke-dashoffset', String(414.7 * (1 - 0.75)));
+      }, 260);
+    });
+  }
+</script>
+
+</body>
+</html>
